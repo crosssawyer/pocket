@@ -20,16 +20,39 @@ Built with Rust and egui, Pocket provides military-grade encryption in a beautif
 - Secure memory wiping with zeroize
 - All data stored locally, never transmitted
 
-## Building
+## Installation
 
+### Download Pre-built Binary
+Check the [Releases](https://github.com/crosssawyer/pocket/releases) page for:
+- **Windows**: `pocket-setup-x.x.x.exe` (installer) or `pocket-x.x.x-windows-x64.exe` (portable)
+- **Linux**: `pocket-x.x.x-linux-x64.tar.gz`
+- **macOS**: `pocket-x.x.x-macos-x64.tar.gz`
+
+### Build from Source
+
+**Prerequisites:**
+- [Rust](https://rustup.rs/) (latest stable)
+- On Linux: `libgtk-3-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev`
+- On Windows: Visual Studio Build Tools with C++ support
+
+**Build:**
 ```bash
 cargo build --release
 ```
 
-## Running
-
+**Run:**
 ```bash
-cargo run
+cargo run --release
+```
+
+### Windows Executable and Installer
+
+For detailed Windows build instructions including creating an installer, see [WINDOWS_BUILD.md](WINDOWS_BUILD.md).
+
+**Quick Windows build:**
+```powershell
+cargo build --release
+# Executable: target\release\pocket.exe
 ```
 
 ## Design Philosophy

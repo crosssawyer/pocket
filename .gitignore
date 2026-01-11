@@ -15,3 +15,9 @@ Thumbs.db
 # Vault data (never commit passwords!)
 *.enc
 salt
+
+# Build artifacts
+installer-output/
+*.msi
+*.wixobj
+*.wixpdb
