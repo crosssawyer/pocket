@@ -67,7 +67,9 @@ pub fn encrypt(plaintext: &str, key: &[u8; KEY_SIZE]) -> Result<String, CryptoEr
 
 /// Decrypts ciphertext using AES-256-GCM
 pub fn decrypt(ciphertext: &str, key: &[u8; KEY_SIZE]) -> Result<String, CryptoError> {
-    let combined = BASE64.decode(ciphertext).map_err(|_| CryptoError::Base64Error)?;
+    let combined = BASE64
+        .decode(ciphertext)
+        .map_err(|_| CryptoError::Base64Error)?;
 
     if combined.len() < NONCE_SIZE {
         return Err(CryptoError::DecryptionFailed);

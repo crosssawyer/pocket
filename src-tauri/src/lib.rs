@@ -54,13 +54,17 @@ fn vault_is_unlocked(state: State<AppState>) -> bool {
 #[tauri::command]
 fn create_vault(state: State<AppState>, master_password: String) -> Result<(), String> {
     let mut vault = state.vault.lock().unwrap();
-    vault.create(&master_password).map_err(vault_error_to_string)
+    vault
+        .create(&master_password)
+        .map_err(vault_error_to_string)
 }
 
 #[tauri::command]
 fn unlock_vault(state: State<AppState>, master_password: String) -> Result<(), String> {
     let mut vault = state.vault.lock().unwrap();
-    vault.unlock(&master_password).map_err(vault_error_to_string)
+    vault
+        .unlock(&master_password)
+        .map_err(vault_error_to_string)
 }
 
 #[tauri::command]
@@ -100,7 +104,9 @@ fn add_entry(state: State<AppState>, entry: EntryInput) -> Result<PasswordEntry,
         updated_at: now,
     };
 
-    vault.add_entry(password_entry).map_err(vault_error_to_string)
+    vault
+        .add_entry(password_entry)
+        .map_err(vault_error_to_string)
 }
 
 #[tauri::command]

@@ -156,17 +156,15 @@ impl Vault {
         let file_content = fs::read_to_string(&self.path)?;
         let vault_data: VaultData = serde_json::from_str(&file_content)?;
 
-        let salt = base64::Engine::decode(
-            &base64::engine::general_purpose::STANDARD,
-            &vault_data.salt,
-        )
-        .map_err(|_| VaultError::InvalidPassword)?;
+        let salt =
+            base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &vault_data.salt)
+                .map_err(|_| VaultError::InvalidPassword)?;
 
         let key = derive_key(master_password, &salt)?;
 
         // Try to decrypt to verify password
-        let entries_json =
-            decrypt(&vault_data.encrypted_entries, &key).map_err(|_| VaultError::InvalidPassword)?;
+        let entries_json = decrypt(&vault_data.encrypted_entries, &key)
+            .map_err(|_| VaultError::InvalidPassword)?;
         let categories_json = decrypt(&vault_data.encrypted_categories, &key)
             .map_err(|_| VaultError::InvalidPassword)?;
 
@@ -191,11 +189,9 @@ impl Vault {
         let file_content = fs::read_to_string(&self.path)?;
         let vault_data: VaultData = serde_json::from_str(&file_content)?;
 
-        let salt = base64::Engine::decode(
-            &base64::engine::general_purpose::STANDARD,
-            &vault_data.salt,
-        )
-        .map_err(|_| VaultError::InvalidPassword)?;
+        let salt =
+            base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &vault_data.salt)
+                .map_err(|_| VaultError::InvalidPassword)?;
 
         self.save_with_salt(&salt)
     }
@@ -256,10 +252,7 @@ impl Vault {
 
     pub fn get_entry(&self, id: Uuid) -> Result<PasswordEntry, VaultError> {
         let data = self.data.as_ref().ok_or(VaultError::Locked)?;
-        data.entries
-            .get(&id)
-            .cloned()
-            .ok_or(VaultError::NotFound)
+        data.entries.get(&id).cloned().ok_or(VaultError::NotFound)
     }
 
     pub fn get_all_entries(&self) -> Result<Vec<PasswordEntry>, VaultError> {
