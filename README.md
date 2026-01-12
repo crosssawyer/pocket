@@ -1,6 +1,8 @@
 # Pocket
 
-A secure, cross-platform password manager with a beautiful liquid glass UI.
+*store some passwords in your pocket or something.*
+
+This app was a password manager I built for windows because I enjoy the passwords app on mac. I have never written a line of rust code before, so I created this app completely doing agentic coding.
 
 ![Pocket](docs/screenshot-placeholder.png)
 
@@ -51,7 +53,3 @@ Find installers in `src-tauri/target/release/bundle/`.
 - **Frontend**: React 19, TypeScript, Vite
 - **Backend**: Rust, Tauri 2
 - **Encryption**: AES-256-GCM, Argon2id
-
-## License
-
-MIT
