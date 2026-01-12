@@ -30,18 +30,25 @@ rustup target add aarch64-apple-darwin x86_64-apple-darwin
 
 The project includes GitHub Actions workflows for automated releases:
 
-1. Create and push a version tag:
+1. Update the app version (these should match):
+   - `package.json`
+   - `src-tauri/tauri.conf.json`
+   - `src-tauri/Cargo.toml`
+
+2. Create and push a version tag (the `release.yml` workflow triggers on tags matching `v*`):
 ```bash
-git tag v0.1.0
+git tag -a v0.1.0 -m "v0.1.0"
 git push origin v0.1.0
 ```
 
-2. The workflow automatically builds for:
+3. Confirm the workflow ran: GitHub → Actions → `Release` (or run it manually via the `Run workflow` button).
+
+4. The workflow automatically builds for:
    - macOS (Universal binary)
    - Windows (MSI and NSIS installers)
    - Linux (AppImage and DEB)
 
-3. Find the draft release in GitHub Releases and publish it.
+5. Find the draft release in GitHub Releases and publish it.
 
 ## Code Signing
 
