@@ -4,9 +4,9 @@ mod vault;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use tauri::State;
 #[cfg(any(target_os = "macos", target_os = "windows"))]
 use tauri::Manager;
+use tauri::State;
 use uuid::Uuid;
 use vault::{Category, PasswordEntry, Vault, VaultError};
 
