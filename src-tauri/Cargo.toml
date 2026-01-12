@@ -1,0 +1,33 @@
+[package]
+name = "pocket"
+version = "0.1.0"
+description = "A secure password manager with a beautiful liquid glass UI"
+authors = ["Pocket Team"]
+edition = "2021"
+
+[lib]
+name = "pocket_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-opener = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+aes-gcm = "0.10"
+argon2 = "0.5"
+rand = "0.8"
+base64 = "0.22"
+uuid = { version = "1.11", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+directories = "6"
+thiserror = "2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+window-vibrancy = "0.5"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+window-vibrancy = "0.5"

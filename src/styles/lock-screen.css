@@ -1,0 +1,108 @@
+.lock-screen {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.lock-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 320px;
+  width: 100%;
+}
+
+.lock-icon-container {
+  position: relative;
+  margin-bottom: var(--space-lg);
+}
+
+.lock-icon-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.lock-icon {
+  position: relative;
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.lock-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+  background: linear-gradient(135deg, var(--text-primary), var(--color-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.lock-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.lock-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.lock-form .input {
+  padding: var(--space-md);
+  padding-left: 44px;
+  font-size: 15px;
+}
+
+.lock-form .input-icon {
+  left: 14px;
+}
+
+.lock-error {
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #fca5a5;
+  font-size: 13px;
+  text-align: center;
+}
+
+.lock-hint {
+  margin-top: var(--space-lg);
+  color: var(--text-tertiary);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.loading-dots {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.loading-dots span {
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-4px); }
+}

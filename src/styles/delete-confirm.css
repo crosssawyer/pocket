@@ -1,0 +1,36 @@
+.delete-modal {
+  max-width: 380px;
+}
+
+.delete-modal .modal-body {
+  text-align: center;
+  padding: var(--space-xl);
+}
+
+.delete-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-lg);
+  background: rgba(239, 68, 68, 0.15);
+  border-radius: 50%;
+  color: var(--color-danger);
+}
+
+.delete-message {
+  font-size: 15px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.delete-message strong {
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.delete-warning {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
