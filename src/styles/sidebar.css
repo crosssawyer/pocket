@@ -88,6 +88,20 @@
   border-top: 1px solid var(--border-color);
 }
 
+.sidebar-meta {
+  padding: 6px 12px 2px;
+  font-size: 11px;
+  color: var(--text-muted);
+  user-select: text;
+}
+
+.sidebar-version {
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .lock-button {
   color: var(--text-muted);
 }

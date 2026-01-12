@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import { getVersion } from '@tauri-apps/api/app';
 import { KeyIcon, StarIcon, LockIcon, categoryIcons } from './Icons';
 import type { Category, ViewMode } from '../types';
 import '../styles/sidebar.css';
@@ -19,6 +21,12 @@ export function Sidebar({
   onLock,
   entryCounts,
 }: SidebarProps) {
+  const [appVersion, setAppVersion] = useState<string | null>(null);
+
+  useEffect(() => {
+    getVersion().then(setAppVersion).catch(() => setAppVersion(null));
+  }, []);
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -78,6 +86,10 @@ export function Sidebar({
           <LockIcon size={18} />
           <span>Lock Vault</span>
         </button>
+        <div className="sidebar-meta">
+          <div className="sidebar-version">Git: {__GIT_DESCRIBE__}</div>
+          {appVersion ? <div className="sidebar-version">App: {appVersion}</div> : null}
+        </div>
       </div>
     </aside>
   );
