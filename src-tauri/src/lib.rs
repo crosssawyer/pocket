@@ -4,7 +4,9 @@ mod vault;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use tauri::{Manager, State};
+use tauri::State;
+#[cfg(any(target_os = "macos", target_os = "windows"))]
+use tauri::Manager;
 use uuid::Uuid;
 use vault::{Category, PasswordEntry, Vault, VaultError};
 
@@ -175,10 +177,10 @@ fn generate_password(length: usize, include_symbols: bool) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .setup(|app| {
+        .setup(|_app| {
             #[cfg(any(target_os = "macos", target_os = "windows"))]
             {
-                let window = app.get_webview_window("main").unwrap();
+                let window = _app.get_webview_window("main").unwrap();
 
                 #[cfg(target_os = "macos")]
                 {
