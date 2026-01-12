@@ -18,6 +18,12 @@ salt
 
 # Build artifacts
 installer-output/
+dist/
 *.msi
 *.wixobj
 *.wixpdb
+*.dmg
+*.app
+*.icns
+*.deb
+*.rpm

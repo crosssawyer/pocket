@@ -25,8 +25,8 @@ Built with Rust and egui, Pocket provides military-grade encryption in a beautif
 ### Download Pre-built Binary
 Check the [Releases](https://github.com/crosssawyer/pocket/releases) page for:
 - **Windows**: `pocket-setup-x.x.x.exe` (installer) or `pocket-x.x.x-windows-x64.exe` (portable)
+- **macOS**: `pocket-x.x.x-macos-universal.tar.gz` (Intel + Apple Silicon)
 - **Linux**: `pocket-x.x.x-linux-x64.tar.gz`
-- **macOS**: `pocket-x.x.x-macos-x64.tar.gz`
 
 ### Build from Source
 
@@ -45,7 +45,9 @@ cargo build --release
 cargo run --release
 ```
 
-### Windows Executable and Installer
+### Platform-Specific Builds
+
+#### Windows Executable and Installer
 
 For detailed Windows build instructions including creating an installer, see [WINDOWS_BUILD.md](WINDOWS_BUILD.md).
 
@@ -53,6 +55,36 @@ For detailed Windows build instructions including creating an installer, see [WI
 ```powershell
 cargo build --release
 # Executable: target\release\pocket.exe
+```
+
+**Create installer:**
+1. Build release: `cargo build --release`
+2. Open `installer.iss` in [Inno Setup](https://jrsoftware.org/isdl.php)
+3. Click "Compile"
+4. Installer: `installer-output/pocket-setup-0.1.0.exe`
+
+#### macOS App Bundle and DMG
+
+For detailed macOS build instructions including creating app bundles and DMG installers, see [MACOS_BUILD.md](MACOS_BUILD.md).
+
+**Quick macOS universal binary:**
+```bash
+./scripts/build-universal.sh
+# Binary: target/release/pocket (Intel + Apple Silicon)
+```
+
+**Create app bundle:**
+```bash
+cargo install cargo-bundle
+cargo bundle --release
+# App: target/release/bundle/osx/Pocket.app
+```
+
+**Create DMG installer:**
+```bash
+./scripts/create-macos-bundle.sh  # Creates app bundle
+./scripts/create-dmg.sh           # Creates DMG installer
+# DMG: dist/Pocket-0.1.0.dmg
 ```
 
 ## Design Philosophy

@@ -129,7 +129,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-macos:
-    name: Build macOS Binary
+    name: Build macOS Universal Binary
     runs-on: macos-latest
 
     steps:
@@ -143,26 +143,63 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Build release binary
-        run: cargo build --release --verbose
+      - name: Add Rust targets
+        run: |
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
-      - name: Create tarball
+      - name: Install cargo-bundle
+        run: cargo install cargo-bundle
+
+      - name: Build Intel binary
+        run: cargo build --release --target x86_64-apple-darwin --verbose
+
+      - name: Build Apple Silicon binary
+        run: cargo build --release --target aarch64-apple-darwin --verbose
+
+      - name: Create universal binary
+        run: |
+          mkdir -p target/release
+          lipo -create \
+            target/x86_64-apple-darwin/release/pocket \
+            target/aarch64-apple-darwin/release/pocket \
+            -output target/release/pocket
+          echo "Universal binary created"
+          lipo -info target/release/pocket
+
+      - name: Create app bundle
+        run: |
+          cargo bundle --release || echo "Bundle creation skipped (icon missing)"
+
+      - name: Create distribution tarball
         run: |
           VERSION="${{ github.ref_name }}"
           VERSION="${VERSION#v}"
           if [ "$VERSION" = "${{ github.ref_name }}" ]; then VERSION="0.1.0"; fi
-          tar -czf "pocket-$VERSION-macos-x64.tar.gz" -C target/release pocket README.md LICENSE
+
+          # Create tarball with binary
+          tar -czf "pocket-$VERSION-macos-universal.tar.gz" \
+            -C target/release pocket \
+            -C ../../ README.md LICENSE MACOS_BUILD.md
 
       - name: Upload macOS binary
         uses: actions/upload-artifact@v3
         with:
-          name: pocket-macos-x64
-          path: pocket-*.tar.gz
+          name: pocket-macos-universal
+          path: pocket-*-macos-universal.tar.gz
+
+      - name: Upload app bundle if exists
+        if: hashFiles('target/release/bundle/osx/Pocket.app') != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: pocket-macos-app
+          path: target/release/bundle/osx/Pocket.app
 
       - name: Add to release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: pocket-*.tar.gz
+          files: |
+            pocket-*-macos-universal.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
