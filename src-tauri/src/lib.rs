@@ -4,7 +4,7 @@ mod vault;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-use tauri::State;
+use tauri::{Manager, State};
 use uuid::Uuid;
 use vault::{Category, PasswordEntry, Vault, VaultError};
 
