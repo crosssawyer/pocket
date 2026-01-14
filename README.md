@@ -4,7 +4,7 @@
 
 This app was a password manager I built for windows because I enjoy the passwords app on mac. I have never written a line of rust code before, so I created this app completely doing agentic coding.
 
-![Pocket](docs/screenshot-placeholder.png)
+![Pocket Password Manager](docs/screenshot.png)
 
 ## Features
 
@@ -14,6 +14,9 @@ This app was a password manager I built for windows because I enjoy the password
 - **Fast**: Built with Rust and React for optimal performance
 - **Offline**: All data stored locally, no cloud sync
 - **Organized**: Categories, favorites, and search
+- **Import/Export**: Import from Chrome/Edge CSV exports, export your passwords
+- **Settings**: Clear all passwords and manage your vault
+- **Keyboard Shortcuts**: Full keyboard navigation support (Ctrl+/ for shortcuts)
 
 ## Quick Start
 
