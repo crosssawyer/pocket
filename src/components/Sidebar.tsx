@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getVersion } from '@tauri-apps/api/app';
-import { KeyIcon, StarIcon, LockIcon, UploadIcon, DownloadIcon, categoryIcons } from './Icons';
+import { KeyIcon, StarIcon, LockIcon, UploadIcon, DownloadIcon, SettingsIcon, categoryIcons } from './Icons';
 import type { Category, ViewMode } from '../types';
 import '../styles/sidebar.css';
 
@@ -13,6 +13,7 @@ interface SidebarProps {
   entryCounts: { all: number; favorites: number; byCategory: Record<string, number> };
   onImport: () => void;
   onExport: () => void;
+  onSettings: () => void;
 }
 
 export function Sidebar({
@@ -24,6 +25,7 @@ export function Sidebar({
   entryCounts,
   onImport,
   onExport,
+  onSettings,
 }: SidebarProps) {
   const [appVersion, setAppVersion] = useState<string | null>(null);
 
@@ -97,6 +99,10 @@ export function Sidebar({
       </div>
 
       <div className="sidebar-footer">
+        <button className="nav-item" onClick={onSettings}>
+          <SettingsIcon size={18} />
+          <span>Settings</span>
+        </button>
         <button className="nav-item lock-button" onClick={onLock}>
           <LockIcon size={18} />
           <span>Lock Vault</span>

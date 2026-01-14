@@ -203,6 +203,19 @@ fn export_passwords(state: State<AppState>) -> Result<String, String> {
     export_to_csv(&entries)
 }
 
+#[tauri::command]
+fn clear_all_entries(state: State<AppState>) -> Result<(), String> {
+    let mut vault = state.vault.lock().unwrap();
+    let entries = vault.get_all_entries().map_err(vault_error_to_string)?;
+
+    // Delete all entries one by one
+    for entry in entries {
+        vault.delete_entry(entry.id).map_err(vault_error_to_string)?;
+    }
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -251,6 +264,7 @@ pub fn run() {
             generate_password,
             import_passwords,
             export_passwords,
+            clear_all_entries,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -21,6 +21,7 @@ export function HotkeyDialog({ onClose }: HotkeyDialogProps) {
       title: 'General',
       shortcuts: [
         { keys: ['Ctrl', '/'], description: 'Open hotkey dialog' },
+        { keys: ['Ctrl', ','], description: 'Open settings' },
         { keys: ['Ctrl', 'L'], description: 'Lock vault' },
         { keys: ['Escape'], description: 'Close dialog' },
       ],

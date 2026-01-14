@@ -172,6 +172,20 @@ export function useVault() {
     }
   }, []);
 
+  const clearAllEntries = useCallback(async (): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await invoke('clear_all_entries');
+      return true;
+    } catch (e) {
+      setError(e as string);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     error,
@@ -193,5 +207,6 @@ export function useVault() {
     generatePassword,
     importPasswords,
     exportPasswords,
+    clearAllEntries,
   };
 }
