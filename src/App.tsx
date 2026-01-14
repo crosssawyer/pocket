@@ -5,6 +5,7 @@ import { EntryList } from './components/EntryList';
 import { EntryDetail } from './components/EntryDetail';
 import { EntryForm } from './components/EntryForm';
 import { DeleteConfirm } from './components/DeleteConfirm';
+import { HotkeyDialog } from './components/HotkeyDialog';
 import { useVault } from './hooks/useVault';
 import type { PasswordEntry, Category, ViewMode, EntryInput, UpdateEntryInput } from './types';
 import './styles/global.css';
@@ -27,6 +28,7 @@ export default function App() {
   const [showForm, setShowForm] = useState(false);
   const [editingEntry, setEditingEntry] = useState<PasswordEntry | null>(null);
   const [deleteEntry, setDeleteEntry] = useState<PasswordEntry | null>(null);
+  const [showHotkeyDialog, setShowHotkeyDialog] = useState(false);
 
   // Initialize app
   useEffect(() => {
@@ -196,6 +198,111 @@ export default function App() {
     }
   };
 
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore shortcuts when typing in input fields (except for specific shortcuts)
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
+
+      // Ctrl+/ or ? - Open hotkey dialog (works in all states)
+      if ((e.ctrlKey && e.key === '/') || (e.shiftKey && e.key === '?')) {
+        e.preventDefault();
+        setShowHotkeyDialog(true);
+        return;
+      }
+
+      // Ctrl+S - Save entry form (when form is open)
+      if (e.ctrlKey && e.key === 's' && showForm) {
+        e.preventDefault();
+        const saveButton = document.querySelector('.entry-form-modal .btn-primary') as HTMLButtonElement;
+        if (saveButton) {
+          saveButton.click();
+        }
+        return;
+      }
+
+      // Only handle other shortcuts when unlocked
+      if (appState !== 'unlocked') return;
+
+      // Ctrl+L - Lock vault
+      if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        handleLock();
+        return;
+      }
+
+      // Ctrl+N - Add new entry (only when no modal is open)
+      if (e.ctrlKey && e.key === 'n' && !showForm && !deleteEntry && !showHotkeyDialog) {
+        e.preventDefault();
+        handleAddEntry();
+        return;
+      }
+
+      // Ctrl+F - Focus search (only when not in input field)
+      if (e.ctrlKey && e.key === 'f' && !isInput) {
+        e.preventDefault();
+        const searchInput = document.querySelector('.search-container .input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+        return;
+      }
+
+      // Arrow keys and Enter - Navigate entry list (when no modal is open and not typing)
+      if (!showForm && !deleteEntry && !showHotkeyDialog && !isInput) {
+        // Arrow Down - Select next entry
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const currentIndex = selectedEntry
+            ? filteredEntries.findIndex(entry => entry.id === selectedEntry.id)
+            : -1;
+          const nextIndex = Math.min(currentIndex + 1, filteredEntries.length - 1);
+          if (nextIndex >= 0 && filteredEntries[nextIndex]) {
+            handleSelectEntry(filteredEntries[nextIndex]);
+          }
+          return;
+        }
+
+        // Arrow Up - Select previous entry
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const currentIndex = selectedEntry
+            ? filteredEntries.findIndex(entry => entry.id === selectedEntry.id)
+            : -1;
+          const prevIndex = Math.max(currentIndex - 1, 0);
+          if (prevIndex >= 0 && filteredEntries[prevIndex]) {
+            handleSelectEntry(filteredEntries[prevIndex]);
+          }
+          return;
+        }
+
+        // Enter - Open selected entry for editing (if one is selected)
+        if (e.key === 'Enter' && selectedEntry) {
+          e.preventDefault();
+          handleEditEntry(selectedEntry);
+          return;
+        }
+      }
+
+      // Escape - Close any open modal
+      if (e.key === 'Escape') {
+        if (showHotkeyDialog) {
+          setShowHotkeyDialog(false);
+        } else if (showForm) {
+          setShowForm(false);
+          setEditingEntry(null);
+        } else if (deleteEntry) {
+          setDeleteEntry(null);
+        }
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [appState, showForm, deleteEntry, showHotkeyDialog, handleLock, filteredEntries, selectedEntry]);
+
   // Render loading state
   if (appState === 'loading') {
     return (
@@ -276,6 +383,10 @@ export default function App() {
           onCancel={() => setDeleteEntry(null)}
           isLoading={vault.isLoading}
         />
+      )}
+
+      {showHotkeyDialog && (
+        <HotkeyDialog onClose={() => setShowHotkeyDialog(false)} />
       )}
     </div>
   );
