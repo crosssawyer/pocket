@@ -32,3 +32,15 @@ export interface UpdateEntryInput extends EntryInput {
 }
 
 export type ViewMode = 'all' | 'favorites' | 'category';
+
+export interface ImportResult {
+  imported_count: number;
+  skipped_count: number;
+  skipped_entries: SkippedEntry[];
+}
+
+export interface SkippedEntry {
+  title: string;
+  username: string;
+  reason: string;
+}

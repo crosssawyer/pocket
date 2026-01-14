@@ -1,0 +1,55 @@
+.export-modal {
+  max-width: 480px;
+}
+
+.export-warning {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  color: #f59e0b;
+  margin-bottom: 20px;
+}
+
+.export-warning p {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.export-warning strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.export-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #ef4444;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.export-info {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.export-info p {
+  margin-bottom: 8px;
+}
+
+.export-info ul {
+  margin-left: 20px;
+}
+
+.export-info li {
+  margin-bottom: 4px;
+}

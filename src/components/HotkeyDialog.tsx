@@ -45,6 +45,13 @@ export function HotkeyDialog({ onClose }: HotkeyDialogProps) {
       ],
     },
     {
+      title: 'Import/Export',
+      shortcuts: [
+        { keys: ['Ctrl', 'I'], description: 'Import passwords' },
+        { keys: ['Ctrl', 'E'], description: 'Export passwords' },
+      ],
+    },
+    {
       title: 'Dialog Navigation',
       shortcuts: [
         { keys: ['Tab'], description: 'Next control' },
