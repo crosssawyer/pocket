@@ -29,11 +29,10 @@ export function HotkeyDialog({ onClose }: HotkeyDialogProps) {
       title: 'Entries',
       shortcuts: [
         { keys: ['Ctrl', 'N'], description: 'Add new entry' },
-        { keys: ['Ctrl', 'F'], description: 'Search entries' },
-        { keys: ['↑'], description: 'Navigate up' },
-        { keys: ['↓'], description: 'Navigate down' },
-        { keys: ['Enter'], description: 'Open selected entry' },
-        { keys: ['Delete'], description: 'Delete selected entry' },
+        { keys: ['Ctrl', 'F'], description: 'Focus search field' },
+        { keys: ['↑'], description: 'Select previous entry' },
+        { keys: ['↓'], description: 'Select next entry' },
+        { keys: ['Enter'], description: 'Edit selected entry' },
       ],
     },
     {

@@ -201,7 +201,7 @@ export default function App() {
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore shortcuts when typing in input fields
+      // Ignore shortcuts when typing in input fields (except for specific shortcuts)
       const target = e.target as HTMLElement;
       const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA';
 
@@ -209,6 +209,16 @@ export default function App() {
       if ((e.ctrlKey && e.key === '/') || (e.shiftKey && e.key === '?')) {
         e.preventDefault();
         setShowHotkeyDialog(true);
+        return;
+      }
+
+      // Ctrl+S - Save entry form (when form is open)
+      if (e.ctrlKey && e.key === 's' && showForm) {
+        e.preventDefault();
+        const saveButton = document.querySelector('.entry-form-modal .btn-primary') as HTMLButtonElement;
+        if (saveButton) {
+          saveButton.click();
+        }
         return;
       }
 
@@ -232,11 +242,47 @@ export default function App() {
       // Ctrl+F - Focus search (only when not in input field)
       if (e.ctrlKey && e.key === 'f' && !isInput) {
         e.preventDefault();
-        const searchInput = document.querySelector('.entry-list-search') as HTMLInputElement;
+        const searchInput = document.querySelector('.search-container .input') as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
         }
         return;
+      }
+
+      // Arrow keys and Enter - Navigate entry list (when no modal is open and not typing)
+      if (!showForm && !deleteEntry && !showHotkeyDialog && !isInput) {
+        // Arrow Down - Select next entry
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const currentIndex = selectedEntry
+            ? filteredEntries.findIndex(entry => entry.id === selectedEntry.id)
+            : -1;
+          const nextIndex = Math.min(currentIndex + 1, filteredEntries.length - 1);
+          if (nextIndex >= 0 && filteredEntries[nextIndex]) {
+            handleSelectEntry(filteredEntries[nextIndex]);
+          }
+          return;
+        }
+
+        // Arrow Up - Select previous entry
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const currentIndex = selectedEntry
+            ? filteredEntries.findIndex(entry => entry.id === selectedEntry.id)
+            : -1;
+          const prevIndex = Math.max(currentIndex - 1, 0);
+          if (prevIndex >= 0 && filteredEntries[prevIndex]) {
+            handleSelectEntry(filteredEntries[prevIndex]);
+          }
+          return;
+        }
+
+        // Enter - Open selected entry for editing (if one is selected)
+        if (e.key === 'Enter' && selectedEntry) {
+          e.preventDefault();
+          handleEditEntry(selectedEntry);
+          return;
+        }
       }
 
       // Escape - Close any open modal
@@ -255,7 +301,7 @@ export default function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [appState, showForm, deleteEntry, showHotkeyDialog, handleLock]);
+  }, [appState, showForm, deleteEntry, showHotkeyDialog, handleLock, filteredEntries, selectedEntry]);
 
   // Render loading state
   if (appState === 'loading') {
