@@ -158,15 +158,13 @@ pub fn import_from_csv(
 pub fn export_to_csv(entries: &[PasswordEntry]) -> Result<String, String> {
     let mut writer = Writer::from_writer(vec![]);
 
-    // Write header
     writer
-        .write_record(&["name", "url", "username", "password"])
+        .write_record(["name", "url", "username", "password"])
         .map_err(|e| format!("Failed to write header: {}", e))?;
 
-    // Write entries
     for entry in entries {
         writer
-            .write_record(&[
+            .write_record([
                 &entry.title,
                 entry.url.as_deref().unwrap_or(""),
                 &entry.username,
