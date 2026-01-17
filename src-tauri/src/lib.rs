@@ -216,6 +216,18 @@ fn clear_all_entries(state: State<AppState>) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn change_master_password(
+    state: State<AppState>,
+    current_password: String,
+    new_password: String,
+) -> Result<(), String> {
+    let mut vault = state.vault.lock().unwrap();
+    vault
+        .change_master_password(&current_password, &new_password)
+        .map_err(vault_error_to_string)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -265,6 +277,7 @@ pub fn run() {
             import_passwords,
             export_passwords,
             clear_all_entries,
+            change_master_password,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

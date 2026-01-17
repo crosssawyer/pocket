@@ -312,4 +312,34 @@ impl Vault {
         self.save()?;
         Ok(result)
     }
+
+    pub fn change_master_password(
+        &mut self,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<(), VaultError> {
+        if !self.is_unlocked() {
+            return Err(VaultError::Locked);
+        }
+
+        let file_content = fs::read_to_string(&self.path)?;
+        let vault_data: VaultData = serde_json::from_str(&file_content)?;
+
+        let current_salt =
+            base64::Engine::decode(&base64::engine::general_purpose::STANDARD, &vault_data.salt)
+                .map_err(|_| VaultError::InvalidPassword)?;
+
+        let current_key = derive_key(current_password, &current_salt)?;
+
+        decrypt(&vault_data.encrypted_entries, &current_key)
+            .map_err(|_| VaultError::InvalidPassword)?;
+
+        let new_salt = generate_salt();
+        let new_key = derive_key(new_password, &new_salt)?;
+
+        self.key = Some(new_key);
+        self.save_with_salt(&new_salt)?;
+
+        Ok(())
+    }
 }

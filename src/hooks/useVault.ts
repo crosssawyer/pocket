@@ -186,6 +186,20 @@ export function useVault() {
     }
   }, []);
 
+  const changeMasterPassword = useCallback(async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await invoke('change_master_password', { currentPassword, newPassword });
+      return true;
+    } catch (e) {
+      setError(e as string);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     error,
@@ -208,5 +222,6 @@ export function useVault() {
     importPasswords,
     exportPasswords,
     clearAllEntries,
+    changeMasterPassword,
   };
 }

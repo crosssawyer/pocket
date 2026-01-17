@@ -465,6 +465,7 @@ export default function App() {
       {showSettingsDialog && (
         <SettingsDialog
           onClearAll={handleClearAll}
+          onChangeMasterPassword={vault.changeMasterPassword}
           onClose={() => setShowSettingsDialog(false)}
           isLoading={vault.isLoading}
         />
