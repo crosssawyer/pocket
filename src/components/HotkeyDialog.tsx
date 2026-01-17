@@ -21,6 +21,7 @@ export function HotkeyDialog({ onClose }: HotkeyDialogProps) {
       title: 'General',
       shortcuts: [
         { keys: ['Ctrl', '/'], description: 'Open hotkey dialog' },
+        { keys: ['Ctrl', ','], description: 'Open settings' },
         { keys: ['Ctrl', 'L'], description: 'Lock vault' },
         { keys: ['Escape'], description: 'Close dialog' },
       ],
@@ -42,6 +43,13 @@ export function HotkeyDialog({ onClose }: HotkeyDialogProps) {
         { keys: ['Escape'], description: 'Cancel editing' },
         { keys: ['Tab'], description: 'Next field' },
         { keys: ['Shift', 'Tab'], description: 'Previous field' },
+      ],
+    },
+    {
+      title: 'Import/Export',
+      shortcuts: [
+        { keys: ['Ctrl', 'I'], description: 'Import passwords' },
+        { keys: ['Ctrl', 'E'], description: 'Export passwords' },
       ],
     },
     {

@@ -6,6 +6,9 @@ import { EntryDetail } from './components/EntryDetail';
 import { EntryForm } from './components/EntryForm';
 import { DeleteConfirm } from './components/DeleteConfirm';
 import { HotkeyDialog } from './components/HotkeyDialog';
+import { ImportDialog } from './components/ImportDialog';
+import { ExportDialog } from './components/ExportDialog';
+import { SettingsDialog } from './components/SettingsDialog';
 import { useVault } from './hooks/useVault';
 import type { PasswordEntry, Category, ViewMode, EntryInput, UpdateEntryInput } from './types';
 import './styles/global.css';
@@ -29,6 +32,9 @@ export default function App() {
   const [editingEntry, setEditingEntry] = useState<PasswordEntry | null>(null);
   const [deleteEntry, setDeleteEntry] = useState<PasswordEntry | null>(null);
   const [showHotkeyDialog, setShowHotkeyDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [showSettingsDialog, setShowSettingsDialog] = useState(false);
 
   // Initialize app
   useEffect(() => {
@@ -198,6 +204,27 @@ export default function App() {
     }
   };
 
+  const handleImport = async (csvContent: string) => {
+    const result = await vault.importPasswords(csvContent);
+    if (result.imported_count > 0) {
+      await loadData();
+    }
+    return result;
+  };
+
+  const handleExport = async () => {
+    return await vault.exportPasswords();
+  };
+
+  const handleClearAll = async () => {
+    const success = await vault.clearAllEntries();
+    if (success) {
+      await loadData();
+      setSelectedEntry(null);
+    }
+    return success;
+  };
+
   // Global keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -233,9 +260,30 @@ export default function App() {
       }
 
       // Ctrl+N - Add new entry (only when no modal is open)
-      if (e.ctrlKey && e.key === 'n' && !showForm && !deleteEntry && !showHotkeyDialog) {
+      if (e.ctrlKey && e.key === 'n' && !showForm && !deleteEntry && !showHotkeyDialog && !showImportDialog && !showExportDialog && !showSettingsDialog) {
         e.preventDefault();
         handleAddEntry();
+        return;
+      }
+
+      // Ctrl+I - Import passwords
+      if (e.ctrlKey && e.key === 'i' && !showForm && !deleteEntry && !showHotkeyDialog && !showImportDialog && !showExportDialog && !showSettingsDialog) {
+        e.preventDefault();
+        setShowImportDialog(true);
+        return;
+      }
+
+      // Ctrl+E - Export passwords
+      if (e.ctrlKey && e.key === 'e' && !showForm && !deleteEntry && !showHotkeyDialog && !showImportDialog && !showExportDialog && !showSettingsDialog) {
+        e.preventDefault();
+        setShowExportDialog(true);
+        return;
+      }
+
+      // Ctrl+, - Open settings
+      if (e.ctrlKey && e.key === ',' && !showForm && !deleteEntry && !showHotkeyDialog && !showImportDialog && !showExportDialog && !showSettingsDialog) {
+        e.preventDefault();
+        setShowSettingsDialog(true);
         return;
       }
 
@@ -289,6 +337,12 @@ export default function App() {
       if (e.key === 'Escape') {
         if (showHotkeyDialog) {
           setShowHotkeyDialog(false);
+        } else if (showSettingsDialog) {
+          setShowSettingsDialog(false);
+        } else if (showImportDialog) {
+          setShowImportDialog(false);
+        } else if (showExportDialog) {
+          setShowExportDialog(false);
         } else if (showForm) {
           setShowForm(false);
           setEditingEntry(null);
@@ -301,7 +355,7 @@ export default function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [appState, showForm, deleteEntry, showHotkeyDialog, handleLock, filteredEntries, selectedEntry]);
+  }, [appState, showForm, deleteEntry, showHotkeyDialog, showImportDialog, showExportDialog, showSettingsDialog, handleLock, filteredEntries, selectedEntry]);
 
   // Render loading state
   if (appState === 'loading') {
@@ -339,6 +393,9 @@ export default function App() {
         onViewChange={handleViewChange}
         onLock={handleLock}
         entryCounts={entryCounts}
+        onImport={() => setShowImportDialog(true)}
+        onExport={() => setShowExportDialog(true)}
+        onSettings={() => setShowSettingsDialog(true)}
       />
 
       <main className="app-main">
@@ -387,6 +444,31 @@ export default function App() {
 
       {showHotkeyDialog && (
         <HotkeyDialog onClose={() => setShowHotkeyDialog(false)} />
+      )}
+
+      {showImportDialog && (
+        <ImportDialog
+          onImport={handleImport}
+          onClose={() => setShowImportDialog(false)}
+          isLoading={vault.isLoading}
+        />
+      )}
+
+      {showExportDialog && (
+        <ExportDialog
+          onExport={handleExport}
+          onClose={() => setShowExportDialog(false)}
+          isLoading={vault.isLoading}
+        />
+      )}
+
+      {showSettingsDialog && (
+        <SettingsDialog
+          onClearAll={handleClearAll}
+          onChangeMasterPassword={vault.changeMasterPassword}
+          onClose={() => setShowSettingsDialog(false)}
+          isLoading={vault.isLoading}
+        />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import type { PasswordEntry, Category, EntryInput, UpdateEntryInput } from '../types';
+import type { PasswordEntry, Category, EntryInput, UpdateEntryInput, ImportResult } from '../types';
 
 export function useVault() {
   const [isLoading, setIsLoading] = useState(false);
@@ -146,6 +146,60 @@ export function useVault() {
     return await invoke<string>('generate_password', { length, includeSymbols });
   }, []);
 
+  const importPasswords = useCallback(async (csvContent: string): Promise<ImportResult> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await invoke<ImportResult>('import_passwords', { csvContent });
+    } catch (e) {
+      setError(e as string);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const exportPasswords = useCallback(async (): Promise<string> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await invoke<string>('export_passwords');
+    } catch (e) {
+      setError(e as string);
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const clearAllEntries = useCallback(async (): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await invoke('clear_all_entries');
+      return true;
+    } catch (e) {
+      setError(e as string);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const changeMasterPassword = useCallback(async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await invoke('change_master_password', { currentPassword, newPassword });
+      return true;
+    } catch (e) {
+      setError(e as string);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isLoading,
     error,
@@ -165,5 +219,9 @@ export function useVault() {
     toggleFavorite,
     getCategories,
     generatePassword,
+    importPasswords,
+    exportPasswords,
+    clearAllEntries,
+    changeMasterPassword,
   };
 }

@@ -1,7 +1,9 @@
 mod crypto;
+mod import_export;
 mod vault;
 
 use chrono::Utc;
+use import_export::{export_to_csv, import_from_csv, ImportResult};
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
 #[cfg(any(target_os = "macos", target_os = "windows"))]
@@ -173,10 +175,65 @@ fn generate_password(length: usize, include_symbols: bool) -> String {
     crypto::generate_password(length, include_symbols)
 }
 
+#[tauri::command]
+fn import_passwords(state: State<AppState>, csv_content: String) -> Result<ImportResult, String> {
+    let mut vault = state.vault.lock().unwrap();
+
+    // Get existing entries for duplicate detection
+    let existing_entries = vault.get_all_entries().map_err(vault_error_to_string)?;
+
+    // Parse CSV and get new entries
+    let (new_entries, result) = import_from_csv(&csv_content, &existing_entries)
+        .map_err(|e| format!("Import failed: {}", e))?;
+
+    // Add all new entries to vault
+    for entry in new_entries {
+        vault.add_entry(entry).map_err(vault_error_to_string)?;
+    }
+
+    Ok(result)
+}
+
+#[tauri::command]
+fn export_passwords(state: State<AppState>) -> Result<String, String> {
+    let vault = state.vault.lock().unwrap();
+    let entries = vault.get_all_entries().map_err(vault_error_to_string)?;
+    export_to_csv(&entries)
+}
+
+#[tauri::command]
+fn clear_all_entries(state: State<AppState>) -> Result<(), String> {
+    let mut vault = state.vault.lock().unwrap();
+    let entries = vault.get_all_entries().map_err(vault_error_to_string)?;
+
+    // Delete all entries one by one
+    for entry in entries {
+        vault
+            .delete_entry(entry.id)
+            .map_err(vault_error_to_string)?;
+    }
+
+    Ok(())
+}
+
+#[tauri::command]
+fn change_master_password(
+    state: State<AppState>,
+    current_password: String,
+    new_password: String,
+) -> Result<(), String> {
+    let mut vault = state.vault.lock().unwrap();
+    vault
+        .change_master_password(&current_password, &new_password)
+        .map_err(vault_error_to_string)
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
         .setup(|_app| {
             #[cfg(any(target_os = "macos", target_os = "windows"))]
             {
@@ -217,6 +274,10 @@ pub fn run() {
             toggle_favorite,
             get_categories,
             generate_password,
+            import_passwords,
+            export_passwords,
+            clear_all_entries,
+            change_master_password,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
