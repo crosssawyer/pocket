@@ -180,9 +180,7 @@ fn import_passwords(state: State<AppState>, csv_content: String) -> Result<Impor
     let mut vault = state.vault.lock().unwrap();
 
     // Get existing entries for duplicate detection
-    let existing_entries = vault
-        .get_all_entries()
-        .map_err(vault_error_to_string)?;
+    let existing_entries = vault.get_all_entries().map_err(vault_error_to_string)?;
 
     // Parse CSV and get new entries
     let (new_entries, result) = import_from_csv(&csv_content, &existing_entries)
@@ -210,7 +208,9 @@ fn clear_all_entries(state: State<AppState>) -> Result<(), String> {
 
     // Delete all entries one by one
     for entry in entries {
-        vault.delete_entry(entry.id).map_err(vault_error_to_string)?;
+        vault
+            .delete_entry(entry.id)
+            .map_err(vault_error_to_string)?;
     }
 
     Ok(())
